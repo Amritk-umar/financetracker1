@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTheme } from "next-themes";
+import { Id } from "../../convex/_generated/dataModel";
 
 
 export default function DashboardPage() {
@@ -96,7 +97,7 @@ export default function DashboardPage() {
         setIsGeneratingPdf(true);
 
         try {
-            const response = await fetch("http://localhost:8000/generate-pdf", {
+            const response = await fetch("https://financetracker1-zelp.onrender.com", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -342,7 +343,7 @@ return (
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <p className="font-bold text-lg">${expense.amount.toFixed(2)}</p>
-                                            <Button variant="destructive" size="sm" onClick={() => deleteExpense({ id: expense._id })}>Delete</Button>
+                                            <Button variant="destructive" size="sm" onClick={() => deleteExpense({ id: expense._id as Id<"expenses"> })}>Delete</Button>
                                         </div>
                                     </div>
                                 ))}
