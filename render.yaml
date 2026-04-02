@@ -1,5 +1,6 @@
 # Render Blueprint: connect the repo and apply this file, or create a Web Service manually.
-# rootDir MUST be "frontend" (your package.json is there). Do NOT use "src" — that causes ENOENT for package.json.
+# Use repo root (leave Root Directory EMPTY in dashboard). Root package.json runs build/start in frontend/.
+# If Root Directory is "src", src/package.json also exists as a fallback. Never set Root Directory to "src" unless that file is on GitHub.
 # Convex runs on Convex Cloud (https://dashboard.convex.dev), not on Render.
 # Optional: push Convex on each deploy — set CONVEX_DEPLOY_KEY, then use:
 #   buildCommand: cd frontend && npm ci && npx convex deploy --cmd "npm run build"
@@ -8,8 +9,6 @@ services:
     name: finance-tracker
     runtime: node
     plan: free
-    rootDir: frontend
-    # Commands run inside rootDir (frontend/). Do not set dashboard Root Directory to "src".
     buildCommand: npm install && npm run build
     startCommand: npm run start
     envVars:

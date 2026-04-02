@@ -1,0 +1,9 @@
+{
+  "name": "finance-tracker-monorepo",
+  "private": true,
+  "description": "Root entry for Render: set Root Directory to empty and use npm run build/start here.",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd frontend && npm run start"
+  }
+}
