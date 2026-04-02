@@ -9,7 +9,8 @@ services:
     name: finance-tracker
     runtime: node
     plan: free
-    buildCommand: cd frontend && npm ci && npm run build
+    # npm install works without package-lock.json; use npm ci once lockfile is always on GitHub.
+    buildCommand: cd frontend && npm install && npm run build
     startCommand: cd frontend && npm run start
     envVars:
       - key: NODE_VERSION
