@@ -1,0 +1,20 @@
+# Render Blueprint: connect the repo and apply this file, or create a Web Service manually.
+# REQUIRED: rootDir "frontend" — npm ci needs frontend/package-lock.json (repo root has none).
+# Convex runs on Convex Cloud (https://dashboard.convex.dev), not on Render.
+# Optional: push Convex on each deploy — set CONVEX_DEPLOY_KEY, then use:
+#   buildCommand: npm ci && npx convex deploy --cmd "npm run build"
+services:
+  - type: web
+    name: finance-tracker
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_PUBLIC_CONVEX_URL
+        sync: false
+      - key: NEXT_PUBLIC_GEMINI_API_KEY
+        sync: false
