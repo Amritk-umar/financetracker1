@@ -1,4 +1,6 @@
-export async function getFinancialAdvice(expenses: any[]) {
+import type { Doc } from "@/convex/_generated/dataModel";
+
+export async function getFinancialAdvice(expenses: Doc<"expenses">[]) {
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) return "API Key not found.";
 
@@ -22,7 +24,7 @@ export async function getFinancialAdvice(expenses: any[]) {
 
         const data = await response.json();
         return data.candidates[0].content.parts[0].text;
-    } catch (error) {
+    } catch {
         return "Could not generate advice at this time.";
     }
 }

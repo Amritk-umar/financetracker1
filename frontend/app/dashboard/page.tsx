@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -225,7 +226,9 @@ return (
                         {isAnalyzing ? (
                             <p className="text-sm animate-pulse">Analyzing your spending habits...</p>
                         ) : aiAdvice ? (
-                            <p className="text-sm italic whitespace-pre-wrap">"{aiAdvice}"</p>
+                            <p className="text-sm italic whitespace-pre-wrap">
+                                &ldquo;{aiAdvice}&rdquo;
+                            </p>
                         ) : (
                             <Button
                                 variant="outline"
@@ -260,12 +263,15 @@ return (
                     <CardContent>
                         {expenses && expenses.length > 0 ? (
                             <SpendingChart data={Object.values(
-                                expenses.reduce((acc: any, curr) => {
-                                    const cat = curr.category.toLowerCase();
-                                    if (!acc[cat]) acc[cat] = { name: cat, value: 0 };
-                                    acc[cat].value += curr.amount;
-                                    return acc;
-                                }, {})
+                                expenses.reduce(
+                                    (acc: Record<string, { name: string; value: number }>, curr: Doc<"expenses">) => {
+                                        const cat = curr.category.toLowerCase();
+                                        if (!acc[cat]) acc[cat] = { name: cat, value: 0 };
+                                        acc[cat].value += curr.amount;
+                                        return acc;
+                                    },
+                                    {}
+                                )
                             )} />
                         ) : (
                             <p className="text-muted-foreground">Add expenses to see your chart.</p>
