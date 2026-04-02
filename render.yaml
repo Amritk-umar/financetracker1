@@ -1,6 +1,5 @@
 # Render Blueprint: connect the repo and apply this file, or create a Web Service manually.
-# Build runs from repo root: lockfile is in frontend/package-lock.json (not at repo root).
-# Leave Render "Root Directory" EMPTY, or these cd commands will break if you also set rootDir to frontend.
+# rootDir MUST be "frontend" (your package.json is there). Do NOT use "src" — that causes ENOENT for package.json.
 # Convex runs on Convex Cloud (https://dashboard.convex.dev), not on Render.
 # Optional: push Convex on each deploy — set CONVEX_DEPLOY_KEY, then use:
 #   buildCommand: cd frontend && npm ci && npx convex deploy --cmd "npm run build"
@@ -9,9 +8,10 @@ services:
     name: finance-tracker
     runtime: node
     plan: free
-    # npm install works without package-lock.json; use npm ci once lockfile is always on GitHub.
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm run start
+    rootDir: frontend
+    # Commands run inside rootDir (frontend/). Do not set dashboard Root Directory to "src".
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
     envVars:
       - key: NODE_VERSION
         value: "20"
