@@ -1,0 +1,9 @@
+{
+  "name": "render-entry-from-src-root",
+  "private": true,
+  "description": "If Render Root Directory is set to 'src', npm uses this file; scripts delegate to frontend/.",
+  "scripts": {
+    "build": "cd ../frontend && npm install && npm run build",
+    "start": "cd ../frontend && npm run start"
+  }
+}
