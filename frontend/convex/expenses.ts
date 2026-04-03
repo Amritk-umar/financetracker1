@@ -8,7 +8,7 @@ export const getExpenses = query({
   handler: async (ctx) => {
     // Get the ID of the person currently logged in
     const userId = await auth.getUserId(ctx);
-    
+
     // If they aren't logged in, return an empty array
     if (!userId) {
       return [];
@@ -17,8 +17,7 @@ export const getExpenses = query({
     // Fetch only their expenses using the index we made in schema.ts
     const expenses = await ctx.db
       .query("expenses")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .order("desc") // Show newest first
+      .withIndex("by_user", (q: any) => q.eq("userId", userId))
       .collect();
 
     return expenses;
@@ -37,7 +36,7 @@ export const addExpense = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
-    
+
     // Security check: Only logged-in users can add data [cite: 222]
     if (!userId) {
       throw new Error("You must be logged in to add an expense");
@@ -61,7 +60,7 @@ export const deleteExpense = mutation({
   args: { id: v.id("expenses") },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
-    
+
     if (!userId) {
       throw new Error("You must be logged in to delete an expense");
     }
