@@ -131,19 +131,29 @@ export default function DashboardPage() {
     };
 
     const handleGetPrediction = async () => {
-        if (!expenses?.length) return;
-        try {
-            const response = await fetch("http://localhost:8000/predict-spending", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(expenses)
-            });
-            const result = await response.json();
-            setPrediction(result.message);
-        } catch (error) {
-            console.error(error);
+    if (!expenses?.length) return;
+
+    // This dynamically uses the Render URL when live, or localhost when you're coding
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/predict-spending`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(expenses)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
         }
-    };
+
+        const result = await response.json();
+        setPrediction(result.message);
+    } catch (error) {
+        console.error("Connection to Python backend failed:", error);
+        setPrediction("Unable to connect to AI service. Please try again later.");
+    }
+};
 
     // 4. Auth Checks (Must be after all Hooks)
     if (isLoading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
