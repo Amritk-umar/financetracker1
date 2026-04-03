@@ -39,27 +39,27 @@ A high-performance, Full-Stack Personal Finance Management application built for
    cd financetracker1
 
 2. **Setup Frontend**
-    cd frontend
-    npm install
-    npx convex dev # This will link your Convex project   
+    * cd frontend
+    * npm install
+    *  npx convex dev # This will link your Convex project   
    
 3.**Setup Python Backend**
-    cd ../backend-python
-    pip install -r requirements.txt
-    uvicorn main:app --reload
+   * cd ../backend-python
+   * pip install -r requirements.txt
+   * uvicorn main:app --reload
 
 4. **Environment Variables**
-   Create a .env.local in /frontend and a .env in /backend-python:
+  * Create a .env.local in /frontend and a .env in /backend-python:
 
-  NEXT_PUBLIC_CONVEX_URL: Your Convex Deployment URL
+  * NEXT_PUBLIC_CONVEX_URL: Your Convex Deployment URL
 
-  GEMINI_API_KEY: Your Google Gemini API Key
+  * GEMINI_API_KEY: Your Google Gemini API Key
 
 **Project Structure**
-/frontend: Next.js application, UI components, and dashboard logic.
+* /frontend: Next.js application, UI components, and dashboard logic.
 
-/backend-python: FastAPI service for Pandas analysis and PDF generation.
-/convex: Database schema, mutations, and authentication logic.
+* /backend-python: FastAPI service for Pandas analysis and PDF generation.
+* /convex: Database schema, mutations, and authentication logic.
 
 
   
