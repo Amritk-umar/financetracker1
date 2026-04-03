@@ -13,7 +13,10 @@ app = FastAPI()
 # Allow your Next.js frontend to talk to this Python server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=[
+        "http://localhost:3000",
+        "https://financetracker1-zelp.onrender.com"
+    ], 
     allow_methods=["*"],
     allow_headers=["*"],
 )

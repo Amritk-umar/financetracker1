@@ -17,6 +17,7 @@ export default function SignupPage() {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setPending(true);
     setError(""); // Clear previous errors
 
     try {
@@ -41,6 +42,8 @@ export default function SignupPage() {
       } else {
         setError("Something went wrong. Please try again.");
       }
+    } finally {
+      setPending(false);
     }
   };
 
