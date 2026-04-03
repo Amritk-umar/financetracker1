@@ -93,42 +93,49 @@ export default function DashboardPage() {
     };
 
     const handleDownloadReport = async () => {
-        if (!expenses || expenses.length === 0) return;
-        setIsGeneratingPdf(true);
+    if (!expenses || expenses.length === 0) return;
+    setIsGeneratingPdf(true);
 
-        try {
-            const response = await fetch("https://financetracker1-zelp.onrender.com", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_name: user?.name ||"Amrit Kumar",
-                    month: new Date().toISOString().slice(0, 7),
-                    expenses: expenses.map(e => ({
-                        category: e.category,
-                        amount: e.amount,
-                        date: e.date
-                    }))
-                })
-            });
+    // 1. Define the Backend URL (Checks Env Var first, then localhost)
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
-            // Handle the File Download
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `Report_${new Date().toISOString().slice(0, 7)}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
+    try {
+        // 2. Change the URL to point to the Python Backend API
+        const response = await fetch(`${BACKEND_URL}/generate-report`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_name: user?.name || "Amrit Kumar",
+                month: new Date().toISOString().slice(0, 7),
+                expenses: expenses.map(e => ({
+                    category: e.category,
+                    amount: e.amount,
+                    date: e.date
+                }))
+            })
+        });
 
-        } catch (error) {
-            console.error("PDF Error:", error);
-            alert("Make sure your Python server is running on port 8000!");
-        } finally {
-            setIsGeneratingPdf(false);
-        }
-    };
+        if (!response.ok) throw new Error("Backend failed to generate PDF");
+
+        // Handle the File Download
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Report_${new Date().toISOString().slice(0, 7)}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("PDF Error:", error);
+        // Updated error message to be more professional for the recruiter
+        alert("The PDF service is temporarily unavailable. Please try again in a moment.");
+    } finally {
+        setIsGeneratingPdf(false);
+    }
+};
 
     const handleGetPrediction = async () => {
     if (!expenses?.length) return;

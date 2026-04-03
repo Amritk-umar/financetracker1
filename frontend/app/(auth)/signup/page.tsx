@@ -18,34 +18,45 @@ export default function SignupPage() {
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setPending(true);
-    setError(""); // Clear previous errors
+    setError(""); 
 
     try {
-      await signIn("password", { email, password, flow: "signUp" });
-      // If successful, the middleware/Convex usually handles the redirect
+        // 1. Attempt the signup
+        await signIn("password", { email, password, flow: "signUp" });
+
+        // 2. SUCCESS: Redirect to dashboard
+        router.push("/"); 
+
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : typeof err === "string"
-            ? err
-            : "";
+        // Log the exact error so you can see what the backend actually said
+        console.error("Signup Error Details:", err);
 
-      // Check if the error is "User already exists"
-      if (message.includes("already exists") || message.includes("taken")) {
-        alert("Account already exists! Redirecting you to Login In...");
+        const message = err instanceof Error ? err.message : String(err);
+        const lowerCaseMessage = message.toLowerCase();
 
-        // Redirect to sign-in page after a short delay
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+        // 3. THE FIX: Catch multiple variations of the "Already Exists" error
+        if (
+            lowerCaseMessage.includes("already exists") || 
+            lowerCaseMessage.includes("taken") ||
+            lowerCaseMessage.includes("in use") || 
+            lowerCaseMessage.includes("duplicate")
+        ) {
+            // Show the alert
+            alert("This account is already registered! Redirecting to Login...");
+            
+            // Redirect after 1.5 seconds so they have time to read the alert
+            setTimeout(() => {
+                router.push("/login"); // ⚠️ Change this if your login page is "/auth" or something else
+            }, 1500);
+            
+        } else {
+            // If it's a different error (like "Password too short"), show it on the UI
+            setError("Something went wrong: " + message);
+        }
     } finally {
-      setPending(false);
+        setPending(false);
     }
-  };
+};
 
   return (
     <div className="flex h-screen items-center justify-center">
