@@ -101,7 +101,7 @@ export default function DashboardPage() {
 
     try {
         // 2. Change the URL to point to the Python Backend API
-        const response = await fetch(`${BACKEND_URL}/generate-report`, {
+        const response = await fetch(`${BACKEND_URL}/generate-pdf`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
