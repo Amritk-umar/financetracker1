@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -18,45 +19,60 @@ export default function SignupPage() {
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setPending(true);
-    setError(""); 
+    setError("");
 
     try {
-        // 1. Attempt the signup
-        await signIn("password", { email, password, flow: "signUp" });
+      // 1. Attempt the signup
+      await signIn("password", { email, password, flow: "signUp" });
 
-        // 2. SUCCESS: Redirect to dashboard
-        router.push("/"); 
+      // 2. SUCCESS: Redirect to dashboard
+      router.push("/dashboard");
 
     } catch (err) {
-        // Log the exact error so you can see what the backend actually said
-        console.error("Signup Error Details:", err);
+      // Log the exact error so you can see what the backend actually said
+      console.error("Signup Error Details:", err);
 
-        const message = err instanceof Error ? err.message : String(err);
-        const lowerCaseMessage = message.toLowerCase();
+      const message = err instanceof Error ? err.message : String(err);
+      const lowerCaseMessage = message.toLowerCase();
 
-        // 3. THE FIX: Catch multiple variations of the "Already Exists" error
-        if (
-            lowerCaseMessage.includes("already exists") || 
-            lowerCaseMessage.includes("taken") ||
-            lowerCaseMessage.includes("in use") || 
-            lowerCaseMessage.includes("duplicate")
-        ) {
-            // Show the alert
-            alert("This account is already registered! Redirecting to Login...");
-            
-            // Redirect after 1.5 seconds so they have time to read the alert
-            setTimeout(() => {
-                router.push("/login"); // ⚠️ Change this if your login page is "/auth" or something else
-            }, 1500);
-            
-        } else {
-            // If it's a different error (like "Password too short"), show it on the UI
-            setError("Something went wrong: " + message);
-        }
+      // 3. THE FIX: Catch multiple variations of the "Already Exists" error
+      if (
+        lowerCaseMessage.includes("already exists") ||
+        lowerCaseMessage.includes("taken") ||
+        lowerCaseMessage.includes("in use") ||
+        lowerCaseMessage.includes("duplicate")
+      ) {
+        // Show the alert
+        alert("This account is already registered! Redirecting to Login...");
+
+        // Redirect after 1.5 seconds so they have time to read the alert
+        setTimeout(() => {
+          router.push("/login"); // ⚠️ Change this if your login page is "/auth" or something else
+        }, 1500);
+
+      } else {
+        // If it's a different error (like "Password too short"), show it on the UI
+        setError("Something went wrong: " + message);
+      }
     } finally {
-        setPending(false);
+      setPending(false);
     }
-};
+
+    useEffect(() => {
+      const wakeUpBackend = async () => {
+        try {
+          const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+          // We just ping the backend root URL. We don't care about the response.
+          await fetch(`${BACKEND_URL}/`);
+          console.log("Backend wake-up ping sent!");
+        } catch (error) {
+          console.log("Waking up backend...");
+        }
+      };
+
+      wakeUpBackend();
+    }, []); // Empty array means this runs EXACTLY once when the page opens
+  };
 
   return (
     <div className="flex h-screen items-center justify-center">
