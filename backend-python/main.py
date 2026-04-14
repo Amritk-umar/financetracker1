@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from fpdf import FPDF
 import pandas as pd
@@ -7,6 +8,7 @@ from datetime import datetime, timedelta
 from fastapi.responses import FileResponse # Add this import at the top
 import tempfile
 import sqlite3
+import os
 
 app = FastAPI()
 
@@ -149,6 +151,31 @@ async def predict_spending(data: list[Expense]):
         "prediction": round(total_spent + forecasted_extra, 2),
         "message": f"Based on your ${daily_avg:.2f}/day average, you are on track to spend ${total_spent + forecasted_extra:.2f} this month."
     }
+
+@app.get("/view-resume")
+async def view_resume():
+    file_path = os.path.join(os.path.dirname(__file__), "Amrit--Kumar.pdf")
+    
+    if os.path.exists(file_path):
+        return FileResponse(
+            path=file_path, 
+            media_type='application/pdf',
+            headers={"Content-Disposition": "inline"}
+        )     
+    raise HTTPException(status_code=404, detail="Resume file not found")
+
+@app.get("/download-report")
+async def get_report():
+    # Update this path to the actual location of your PDF
+    file_path = "E:/project/finance-tracker/backend-python/report_2026-04.pdf"
+    
+    if os.path.exists(file_path):
+        return FileResponse(
+            path=file_path, 
+            media_type='application/pdf', 
+            filename="report.pdf"
+        )
+    raise HTTPException(status_code=404, detail="File not found")
 
 
 if __name__ == "__main__":
