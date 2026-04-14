@@ -2,6 +2,7 @@
 
 import { SpendingChart } from "@/components/SpendingChart";
 import { getFinancialAdvice } from "@/lib/gemini";
+import { openLocalPDF } from "@/lib/api";
 import { useState } from "react";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -183,6 +184,12 @@ return (
                 disabled={isGeneratingPdf || !expenses?.length || user === undefined}
             >
                 {isGeneratingPdf ? "📄 Generating..." : "📄 Download PDF"}
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() => openLocalPDF("/view-resume")}
+            >
+                💼 View Resume
             </Button>
             <Button
                 variant="outline"
